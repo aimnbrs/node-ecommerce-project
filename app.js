@@ -8,14 +8,14 @@ const bodyParse = require('body-parser');
 
 
 
-const URL = 'mongodb+srv://aimnbrs:12345qwert@cluster0.5dsrb.mongodb.net/ecommarce_data?retryWrites=true&w=majority'
+const URL = 'mongodb+srv://aimnbrs:f6KRTND6Qg7kgyWw@cluster0.5dsrb.mongodb.net/ecommarce_data?retryWrites=true&w=majority'
 
 
 mongoose.connect(URL, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
     useCreateIndex: true,
-  }).catch((error) => console.log(error.reason));
+  }).catch((error) => console.log("connection problem",error.reason));
 
 
 app.use(bodyParse.urlencoded({extended : false}));
