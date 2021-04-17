@@ -23,7 +23,7 @@ router.post("/signup", async (req, res) => {
       avatarUrl: newUserCreat.avatarUrl,
     });
   } catch (err) {
-    res.send(err);
+    res.send(err.message);
     console.log(err.message);
   }
 });
@@ -35,11 +35,13 @@ router.get("/signin", async (req, res) => {
             {email : req.query.email},
             {password : req.query.password}
         ]
+        
     });
     res.status(201).send(user);
+    console.log(user,req.query.email,req.query.password)
   } catch (err) {
     console.log(err.message);
-    res.send(err);
+    res.status(400).send({ message: 'Invalid Email or Password.' })
   }
 });
 
@@ -52,7 +54,7 @@ router.patch("/:id", async (req, res) => {
     res.status(201).send(user);
   } catch (err) {
     console.log(err.message);
-    res.send(err);
+    res.status(400).send({ message: 'Invalid Patch' })
   }
 });
 
@@ -64,7 +66,7 @@ router.delete("/:id", async (req, res) => {
     res.status(201).send(user);
   } catch (err) {
     console.log(err.message);
-    res.send(err);
+    res.status(400).send({ message: 'Invalid Delete' })
   }
 });
 

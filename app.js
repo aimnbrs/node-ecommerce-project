@@ -3,6 +3,7 @@ const app = express();
 const productRouter = require('./routes/productRoute') ;
 const orderRouter = require('./routes/orderRoute') ;
 const userRouter = require('./routes/userRoute') ;
+const blogsRouter = require('./routes/blogsRoute') ;
 const mongoose = require('mongoose');
 const bodyParse = require('body-parser');
 
@@ -24,7 +25,7 @@ app.use("/upload", express.static("upload"));
 app.use("/product", productRouter);
 app.use("/order", orderRouter);
 app.use("/user", userRouter);
+app.use("/blogs", blogsRouter);
 
-  
 
 module.exports = app;
