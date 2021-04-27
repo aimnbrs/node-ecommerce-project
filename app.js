@@ -6,10 +6,10 @@ const userRouter = require('./routes/userRoute') ;
 const blogsRouter = require('./routes/blogsRoute') ;
 const mongoose = require('mongoose');
 const bodyParse = require('body-parser');
+require('dotenv').config();
 
 
-
-const URL = 'mongodb+srv://aimnbrs:f6KRTND6Qg7kgyWw@cluster0.5dsrb.mongodb.net/ecommarce_data?retryWrites=true&w=majority'
+const URL = process.env.MONGODB_URL
 
 
 mongoose.connect(URL, {

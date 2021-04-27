@@ -5,28 +5,33 @@ const mongoose = "mongoose";
 
 router.post("/", async (req, res) => {
   console.log(req.body);
-  const newOrder = new Order({
-    user_id: req.body.user_id,
-    product: req.body.product,
-    quantity : req.body.quantity,
-    // isPayed : req.body.isPayed,
-    // isdelivered : req.body.isdelivered,
-    // delivredAt : req.body.delivredAt,
-    // productsCost : req.body.productsCost,
-    // deliveryCost : req.body.deliveryCost,
-    // taxes : req.body.taxes,
-    // total : req.body.total,
-    // adresse : req.body.adresse,
-  });
-  const newOrderCreat = await newOrder.save();
-  res.status(201).send({ message: "new order created", newOrderCreat });
+  try {
+    const newOrder = new Order({
+      user_id: req.body.user_id,
+      product: req.body.product,
+      quantity: req.body.quantity,
+      // isPayed : req.body.isPayed,
+      // isdelivered : req.body.isdelivered,
+      // delivredAt : req.body.delivredAt,
+      // productsCost : req.body.productsCost,
+      // deliveryCost : req.body.deliveryCost,
+      // taxes : req.body.taxes,
+      // total : req.body.total,
+      // adresse : req.body.adresse,
+    });
+    await newOrder.save()
+    const productId = { product: req.body.product }
+    const orderCreated = await Order.findOne({ ...productId }).populate("product");
+    res.status(201).send(orderCreated);
+  } catch (err) {
+    res.send(err);
+    console.log(err.message);
+  }
 });
 
-
-
 router.get("/", async (req, res) => {
-  const user_id = {user_id : req.query.user_id};
-  console.log('userid',user_id)
+  const user_id = { user_id: req.query.user_id };
+  console.log("userid", user_id);
   try {
     const orders = await Order.find({ ...user_id }).populate("product");
     res.status(201).send(orders);
@@ -36,12 +41,10 @@ router.get("/", async (req, res) => {
   }
 });
 
-
-
 router.patch("/:id", async (req, res) => {
   try {
-    console.log(req.body)
-    const quantity = {quantity : req.body.valueUpate}
+    console.log(req.body);
+    const quantity = { quantity: req.body.valueUpate };
     const orders = await Order.findByIdAndUpdate(req.params.id, quantity, {
       new: true,
       useFindAndModify: false,
@@ -55,7 +58,7 @@ router.patch("/:id", async (req, res) => {
 
 router.delete("/:id", async (req, res) => {
   try {
-    console.log("deleteAction")
+    console.log("deleteAction");
     const orders = await Order.findByIdAndDelete(req.params.id, {
       useFindAndModify: false,
     });
