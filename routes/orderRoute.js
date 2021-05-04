@@ -1,9 +1,10 @@
 const express = require("express");
+const { authorized } = require("../middleware");
 const router = express.Router();
 const Order = require("./../DB/model/orderModel");
 const mongoose = "mongoose";
 
-router.post("/", async (req, res) => {
+router.post("/", authorized, async (req, res) => {
   console.log(req.body);
   try {
     const newOrder = new Order({
@@ -29,9 +30,11 @@ router.post("/", async (req, res) => {
   }
 });
 
-router.get("/", async (req, res) => {
+router.get("/",authorized, async (req, res) => {
+  // console.log("this is token",req.headers.authorization.split(" ")[1]);
   const user_id = { user_id: req.query.user_id };
   console.log("userid", user_id);
+  console.log("req.user");
   try {
     const orders = await Order.find({ ...user_id }).populate("product");
     res.status(201).send(orders);
@@ -41,7 +44,7 @@ router.get("/", async (req, res) => {
   }
 });
 
-router.patch("/:id", async (req, res) => {
+router.patch("/:id",authorized, async (req, res) => {
   try {
     console.log(req.body);
     const quantity = { quantity: req.body.valueUpate };
@@ -56,7 +59,7 @@ router.patch("/:id", async (req, res) => {
   }
 });
 
-router.delete("/:id", async (req, res) => {
+router.delete("/:id",authorized, async (req, res) => {
   try {
     console.log("deleteAction");
     const orders = await Order.findByIdAndDelete(req.params.id, {
