@@ -1,16 +1,43 @@
 const express = require("express");
 const router = express.Router();
 const Product = require("./../DB/model/productModel");
-const mongoose = "mongoose";
+const mongoose = require("mongoose");
+const multer = require("multer");
 
-router.post("/", async (req, res) => {
+const storage = multer.diskStorage({
+  destination: (req, file, callback) => {
+    callback(null, "./upload/");
+  },
+  filename: (req, file, callback) => {
+    callback(null,`${new Date().toDateString()  + file.originalname}`.replace(/\s/g, '_')  );
+  },
+});
+
+const mimFilter = (req, file, callback) => {
+  if (file.mimetype === "image/jpeg" || "image/png" || "image/jpg") {
+    callback(null,true)
+  } else {
+    callback(null,false)
+  }
+}
+const upload = multer({
+  storage: storage,
+  limits: { fileSize: 1024 * 1024 * 5 },
+  fileFilter: mimFilter,
+});
+
+router.post("/", upload.single("productImage"), async (req, res) => {
+  console.log(req.file.path);
   try {
     const newProduct = new Product({
       _id: new mongoose.Types.ObjectId(),
       category: req.body.category,
       model: req.body.model,
       price: req.body.price,
-      url: req.body.url,
+      url: "http://localhost:5000/" +  req.file.path,
+      color: req.body.color,
+      status: req.body.status,
+      style: req.body.style,
     });
     const newProductCreat = await newProduct.save();
     res.status(201).send({ message: "new product created", newProductCreat });
@@ -40,11 +67,11 @@ router.get("/", async (req, res) => {
       : {};
     const category = req.query.category ? { category: req.query.category } : {};
     const sortPrice = req.query.sortPrice
-      ? (req.query.sortPrice === "dec"
+      ? req.query.sortPrice === "dec"
         ? { price: -1 }
-        : { price: 1 })
+        : { price: 1 }
       : {};
-      console.log(sortPrice);
+    console.log(sortPrice);
 
     const products = await Product.find({
       ...color,
@@ -53,7 +80,7 @@ router.get("/", async (req, res) => {
       ...price,
       ...category,
       ...model,
-    }).sort({...sortPrice});
+    }).sort({ ...sortPrice });
     res.status(201).send(products);
   } catch (err) {
     res.send(err);

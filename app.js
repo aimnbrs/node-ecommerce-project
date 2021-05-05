@@ -5,7 +5,7 @@ const orderRouter = require("./routes/orderRoute");
 const userRouter = require("./routes/userRoute");
 const blogsRouter = require("./routes/blogsRoute");
 const mongoose = require("mongoose");
-const bodyParse = require("body-parser");
+const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 require("dotenv").config();
 
@@ -21,8 +21,8 @@ mongoose
   .catch((error) => console.log("connection problem", error.reason));
 
 app.use(cookieParser());
-app.use(bodyParse.urlencoded({ extended: false }));
-app.use(bodyParse.json());
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 app.use("/upload", express.static("upload"));
 app.use("/product", productRouter);
 app.use("/order", orderRouter);
