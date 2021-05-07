@@ -11,7 +11,7 @@ router.get("/", async (req, res) => {
     console.log(blogs)
   } catch (err) {
     console.log(err.message);
-    res.status(400).send({ message: 'Invalid INFORMATION' })
+    res.status(201).send(`Error :${err.message}`)
   }
 });
 

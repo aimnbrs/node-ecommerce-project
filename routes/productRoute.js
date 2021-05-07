@@ -43,7 +43,7 @@ router.post("/", upload.single("productImage"), async (req, res) => {
     res.status(201).send({ message: "new product created", newProductCreat });
   } catch (err) {
     console.log(err.message);
-    res.send(err);
+    res.status(201).send(`Error :${err.message}`);
   }
 });
 
@@ -83,7 +83,7 @@ router.get("/", async (req, res) => {
     }).sort({ ...sortPrice });
     res.status(201).send(products);
   } catch (err) {
-    res.send(err);
+    res.status(201).send(`Error :${err.message}`);
     console.log(err.message);
   }
 });
@@ -96,7 +96,7 @@ router.patch("/:id", async (req, res) => {
     });
     res.status(201).send(products);
   } catch (err) {
-    res.send(err);
+    res.status(201).send(`Error :${err.message}`);
     console.log(err.message);
   }
 });
@@ -108,7 +108,7 @@ router.delete("/:id", async (req, res) => {
     });
     res.status(201).send(products);
   } catch (err) {
-    console.log(err.message);
+    res.status(201).send(`Error :${err.message}`);
     res.send(err);
   }
 });

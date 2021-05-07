@@ -27,10 +27,10 @@ const authorized = async (req, res, next) => {
       req.user = decoded;
     next();
     } else {
-      return res.status(201).send("token is not valide");
+      throw "token is not valide";
     }
-  } catch {
-    return res.status(201).send("nothing");
+  } catch (err) {
+    return res.status(201).send(`Error auth : ${err.message || err}`);
   }
 };
 
@@ -61,12 +61,12 @@ const currentUser = async (req, res,next) => {
      
     }  
     if (token === 'undefined') {
-        console.log("undefo");
-      res.status(400).send('');
+        console.log("no session");
+      throw "user is not authenticated";
       
     }
-  } catch {
-    return res.status(201).send("onlynothing");
+  } catch(err) {
+    return res.status(201).send(`Error token : ${err.message || err}`);
   }
 };
 module.exports = { getToken, authorized, currentUser };

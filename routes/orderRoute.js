@@ -25,12 +25,12 @@ router.post("/", authorized, async (req, res) => {
     const orderCreated = await Order.findOne({ ...productId }).populate("product");
     res.status(201).send(orderCreated);
   } catch (err) {
-    res.send(err);
+    res.status(201).send(`Error postOrder:${err.message}`);
     console.log(err.message);
   }
 });
 
-router.get("/",authorized, async (req, res) => {
+router.get("/", authorized, async (req, res) => {
   // console.log("this is token",req.headers.authorization.split(" ")[1]);
   const user_id = { user_id: req.query.user_id };
   console.log("userid", user_id);
@@ -39,12 +39,12 @@ router.get("/",authorized, async (req, res) => {
     const orders = await Order.find({ ...user_id }).populate("product");
     res.status(201).send(orders);
   } catch (err) {
-    res.send(err);
+    res.status(201).send(`Error getOrder:${err.message}`);
     console.log(err.message);
   }
 });
 
-router.patch("/:id",authorized, async (req, res) => {
+router.patch("/:id", authorized, async (req, res) => {
   try {
     console.log(req.body);
     const quantity = { quantity: req.body.valueUpate };
@@ -54,12 +54,12 @@ router.patch("/:id",authorized, async (req, res) => {
     });
     res.status(201).send(orders);
   } catch (err) {
-    res.send(err);
+    res.status(201).send(`Error patchOrder:${err.message}`);
     console.log(err.message);
   }
 });
 
-router.delete("/:id",authorized, async (req, res) => {
+router.delete("/:id", authorized, async (req, res) => {
   try {
     console.log("deleteAction");
     const orders = await Order.findByIdAndDelete(req.params.id, {
@@ -67,7 +67,7 @@ router.delete("/:id",authorized, async (req, res) => {
     });
     res.status(201).send(orders);
   } catch (err) {
-    console.log(err.message);
+    res.status(201).send(`Error deleteOrder:${err.message}`);
     res.send(err);
   }
 });

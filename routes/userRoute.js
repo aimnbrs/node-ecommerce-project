@@ -8,7 +8,7 @@ const { getToken, authorized, currentUser } = require("../middleware");
 router.post("/signup", async (req, res) => {
   try {
     const salt = await bcrypt.genSalt(10);
-    const hashPassword =  bcrypt.hashSync(req.body.password, salt);
+    const hashPassword = bcrypt.hashSync(req.body.password, salt);
     const newUser = new User({
       _id: new mongoose.Types.ObjectId(),
       name: req.body.name,
@@ -18,9 +18,9 @@ router.post("/signup", async (req, res) => {
       avatarUrl: req.body.avatarUrl,
     });
     const newUserCreat = await newUser.save();
-    console.log(newUserCreat);
-    const getUser = newUserCreat[0]._doc;
-    res.cookie("token", getToken(getUser), {
+    console.log("newUserCreat",newUserCreat._id);
+    const getUser = newUserCreat[0];
+    res.cookie("token", getToken(newUserCreat), {
       maxAge: 2 * 60 * 60 * 1000,
     });
     res.status(201).send({
@@ -31,7 +31,7 @@ router.post("/signup", async (req, res) => {
       avatarUrl: newUserCreat.avatarUrl,
     });
   } catch (err) {
-    res.send(err.message);
+    res.status(201).send(`Error sigUp : ${err}`);
     console.log(err.message);
   }
 });
@@ -41,18 +41,23 @@ router.get("/signin", currentUser, async (req, res) => {
     const user = await User.find({
       email: req.query.email,
     });
-    const getUser = user[0]._doc;
-    console.log("userInformation", getUser.password, req.query.password);
-    const match = await bcrypt.compare(req.query.password, user[0].password);
-    if (match) {
-      console.log(match);
-      res.cookie("token", getToken(user[0]), { maxAge: 2 * 60 * 60 * 1000 });
-      res.status(201).send(user[0]);
+    console.log('user',user);
+    if (user.length == 0) {
+      throw "Invalid Email Or Password";
     } else {
-      res.status(201).send("");
+      const match = await bcrypt.compare(req.query.password, user[0].password);
+      if (match) {
+        console.log("ths is match",match);
+        res.cookie("token", getToken(user[0]), { maxAge: 2 * 60 * 60 * 1000 });
+        res.status(201).send(user[0]);
+      } else {
+        console.log("token invalid");
+        throw "token invalid";
+      }
     }
   } catch (err) {
-    res.status(400).send(err.message);
+    console.log(err);
+    res.status(201).send(`Error signIn : ${err || err.message}`);
   }
 });
 
@@ -73,7 +78,7 @@ router.patch("/:id", authorized, async (req, res) => {
     });
   } catch (err) {
     console.log(err.message);
-    res.status(400).send({ message: "Invalid Patch" });
+    res.status(201).send(`Error patchUser : ${err.message}`);
   }
 });
 
@@ -93,7 +98,7 @@ router.delete("/:id", authorized, async (req, res) => {
     });
   } catch (err) {
     console.log(err.message);
-    res.status(400).send({ message: "Invalid Delete" });
+    res.status(201).send(`Error deleteOrder : ${err.message}`);
   }
 });
 
