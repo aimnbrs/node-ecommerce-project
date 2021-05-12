@@ -26,8 +26,10 @@ const upload = multer({
   fileFilter: mimFilter,
 });
 
-router.post("/", upload.single("productImage"), async (req, res) => {
-  console.log(req.file.path);
+router.post("/", upload.single("file"), async (req, res) => {
+  console.log("color",req.body.color);
+  console.log("style",req.body.style);
+  console.log("file",req.file);
   try {
     const newProduct = new Product({
       _id: new mongoose.Types.ObjectId(),
@@ -39,8 +41,9 @@ router.post("/", upload.single("productImage"), async (req, res) => {
       status: req.body.status,
       style: req.body.style,
     });
+
     const newProductCreat = await newProduct.save();
-    res.status(201).send({ message: "new product created", newProductCreat });
+    res.status(201).send(newProductCreat);
   } catch (err) {
     console.log(err.message);
     res.status(201).send(`Error :${err.message}`);
